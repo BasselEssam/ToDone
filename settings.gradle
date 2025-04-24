@@ -11,12 +11,16 @@ pluginManagement {
         gradlePluginPortal()
         maven{ url= uri("https://www.jitpack.io")}
     }
+    plugins {
+        id("com.google.devtools.ksp") version "1.9.24-1.0.17"
+    }
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
+        gradlePluginPortal()
         maven{ url= uri("https://www.jitpack.io")}
     }
 }

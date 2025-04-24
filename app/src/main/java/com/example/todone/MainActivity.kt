@@ -1,5 +1,6 @@
 package com.example.todone
 
+import Taskk
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +11,7 @@ import com.example.todone.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding:ActivityMainBinding
+    lateinit var tasksm:MutableList<Taskk>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -32,7 +34,7 @@ class MainActivity : AppCompatActivity() {
             else replaceFragment(DoneFragment())
             true
         }
-
+//        TasksDB.createDatabase(this)
     }
 
     fun replaceFragment(fragment:Fragment) {

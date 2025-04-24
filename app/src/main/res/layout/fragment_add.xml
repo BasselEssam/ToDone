@@ -4,23 +4,88 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EBE699"
+    android:background="#FFFFFF"
     tools:context=".AddFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/addTaskButton"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Add Task Screen"
-            android:textSize="34sp"
-            android:textStyle="bold"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="60dp"
+            android:text="Add Task"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/taskTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:ems="10"
+            android:hint="Task tiltle here"
+            android:inputType="text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/taskTitle"
+            app:layout_constraintTop_toBottomOf="@+id/taskTitle">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/taskDescription"
+                android:layout_width="match_parent"
+                android:layout_height="179dp"
+                android:hint="Task description" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <EditText
+            android:id="@+id/taskDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:ems="10"
+            android:hint="Task Date"
+            android:inputType="date"
+            app:layout_constraintStart_toStartOf="@+id/taskTitle"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+
+        <EditText
+            android:id="@+id/taskTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:ems="10"
+            android:hint="Task Time"
+            android:inputType="time"
+            app:layout_constraintStart_toStartOf="@+id/taskTitle"
+            app:layout_constraintTop_toBottomOf="@+id/taskDate" />
+
+        <EditText
+            android:id="@+id/taskLocation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
+            android:ems="10"
+            android:hint="Task Location (optional)"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/taskTitle"
+            app:layout_constraintTop_toBottomOf="@+id/taskTime" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

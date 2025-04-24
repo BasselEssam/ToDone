@@ -1,6 +1,6 @@
 package com.example.todone
 
-import Task
+import Taskk
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,12 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.todone.databinding.FragmentHomeBinding
 import com.xwray.groupie.GroupieAdapter
-import java.time.LocalDate
 
 
 class HomeFragment : Fragment() {
     lateinit var binding:FragmentHomeBinding
     lateinit var tasks:MutableList<Task>
+    lateinit var db :TasksDB
+    lateinit var taskDao:TaskDao
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -25,12 +26,15 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tasks= mutableListOf(Task("Gym","x10 push ups and 10 ABS", "2025-04-20","10:30 PM",false),
-            Task("Make a call","call Mr.Amr", "2025-04-20","10:30 PM",false),
-            Task("Gym","x10 push ups and 10 ABS\nRunning 10 mins", "2025-04-20","10:30 PM",false),
-            Task("Gym","x10 push ups and 10 ABS", "2025-04-20","10:30 PM",false),
-            Task("Gym","x10 push ups and 10 ABS", "2025-04-20","10:30 PM",false),
-            Task("Gym","x10 push ups and 10 ABS", "2025-04-20","10:30 PM",false),)
+        db = TasksDB.getDatabase(requireContext())
+        taskDao = db.taskDao()
+//        tasks= mutableListOf(Taskk("Gym","x10 push ups and 10 ABS", "2025-04-20","10:30 PM",false,0.0,0.0),
+//            Taskk("Make a call","call Mr.Amr", "2025-04-20","10:30 PM",false,0.0,0.0),
+//            Taskk("Gym","x10 push ups and 10 ABS\nRunning 10 mins", "2025-04-20","10:30 PM",false,0.0,0.0),
+//            Taskk("Gym","x10 push ups and 10 ABS", "2025-04-20","10:30 PM",false,0.0,0.0),
+//            Taskk("Gym","x10 push ups and 10 ABS", "2025-04-20","10:30 PM",false,0.0,0.0),
+//            Taskk("Gym","x10 push ups and 10 ABS", "2025-04-20","10:30 PM",false,0.0,0.0),)
+        tasks=taskDao.getTasks()
 
         val taskItems=tasks.map { TaskItem(it) }
         val adapter= GroupieAdapter()
