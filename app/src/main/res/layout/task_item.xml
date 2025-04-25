@@ -48,6 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="12dp"
+            android:maxLines="2"
             android:text="Task Description\nTask Description"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -56,10 +57,11 @@
 
         <CheckBox
             android:id="@+id/tiCheckBox"
+            style="@style/Widget.AppCompat.CompoundButton.CheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"
-            android:buttonTint="#78D479"
+            android:buttonTint="#68DB6C"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tiTitle" />
 
@@ -77,11 +79,12 @@
             android:id="@+id/tiDeleteButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:backgroundTint="#F1EEEE"
-            android:tint="#FF0E0E"
+            android:onClick="deleteTask"
             app:layout_constraintEnd_toEndOf="@+id/tiCheckBox"
             app:layout_constraintTop_toBottomOf="@+id/tiDescription"
-            app:srcCompat="@android:drawable/ic_menu_delete" />
+            app:srcCompat="@android:drawable/ic_menu_delete"
+            app:tint="#FF0E0E" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
