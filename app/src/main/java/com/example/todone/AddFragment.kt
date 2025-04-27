@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.work.OneTimeWorkRequest
+import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.example.todone.databinding.FragmentAddBinding
 import mumayank.com.airlocationlibrary.AirLocation
@@ -73,8 +74,9 @@ class AddFragment : Fragment(), AirLocation.Callback {
         if(requestCode==1){
             if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
                 // Notifications
-                val request=OneTimeWorkRequest.Builder(NotificationWork::class.java)
-                    .setInitialDelay(2,TimeUnit.SECONDS)
+//                val request=OneTimeWorkRequest.Builder(NotificationWork::class.java)
+//                    .build()
+                val request=PeriodicWorkRequest.Builder(NotificationWork::class.java,15,TimeUnit.MINUTES)
                     .build()
 
                 WorkManager.getInstance(requireContext()).enqueue(request)
@@ -137,8 +139,11 @@ class AddFragment : Fragment(), AirLocation.Callback {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.POST_NOTIFICATIONS),1)
         }else{
             // Notifications
-            val request=OneTimeWorkRequest.Builder(NotificationWork::class.java)
-                .setInitialDelay(2,TimeUnit.SECONDS)
+//            val request=OneTimeWorkRequest.Builder(NotificationWork::class.java)
+//                .build()
+
+            val request=PeriodicWorkRequest.Builder(NotificationWork::class.java,15,TimeUnit.MINUTES)
+                .setInitialDelay(15,TimeUnit.SECONDS)
                 .build()
 
             WorkManager.getInstance(requireContext()).enqueue(request)
