@@ -1,18 +1,29 @@
 package com.example.todone
 
 import Taskk
+import android.Manifest
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.example.todone.databinding.FragmentAddBinding
-import com.google.android.gms.tasks.Task
 import mumayank.com.airlocationlibrary.AirLocation
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import java.util.concurrent.TimeUnit
+
 
 class AddFragment : Fragment(), AirLocation.Callback {
     lateinit var binding:FragmentAddBinding
@@ -21,12 +32,13 @@ class AddFragment : Fragment(), AirLocation.Callback {
     lateinit var db :TasksDB
     lateinit var taskDao:TaskDao
     val tasks= mutableListOf<Taskk>()
+    val calendar = Calendar.getInstance()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-       binding=FragmentAddBinding.inflate(layoutInflater)
+       binding=FragmentAddBinding.inflate(inflater, container,false)
         return binding.root
     }
 
@@ -35,6 +47,12 @@ class AddFragment : Fragment(), AirLocation.Callback {
         // write main code here
         binding.addTaskButton.setOnClickListener {
             addTask(view)
+        }
+        binding.taskDate.setOnClickListener {
+            showDatePicker()
+        }
+        binding.taskTime.setOnClickListener {
+            showTimePicker()
         }
         airLocation=AirLocation(requireActivity(),this,true)
         airLocation.start()
@@ -52,6 +70,16 @@ class AddFragment : Fragment(), AirLocation.Callback {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         airLocation.onRequestPermissionsResult(requestCode,permissions,grantResults)
+        if(requestCode==1){
+            if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                // Notifications
+                val request=OneTimeWorkRequest.Builder(NotificationWork::class.java)
+                    .setInitialDelay(2,TimeUnit.SECONDS)
+                    .build()
+
+                WorkManager.getInstance(requireContext()).enqueue(request)
+            }
+        }
     }
 
     fun addTask(view: View) {
@@ -60,6 +88,10 @@ class AddFragment : Fragment(), AirLocation.Callback {
             Toast.makeText(requireContext(), "please fill required fields", Toast.LENGTH_SHORT).show()
             return
         }
+
+        val time12h= SimpleDateFormat("hh:mm a", Locale.getDefault()).parse(binding.taskTime.text.toString())
+        val time24h=SimpleDateFormat("HH:mm", Locale.getDefault()).format(time12h)
+//        println(time24h)
         if (binding.taskLocation.text.toString().isNotEmpty()) {
             try {
                 val taskLoc = coder.getFromLocationName(binding.taskLocation.text.toString(), 1)
@@ -96,7 +128,58 @@ class AddFragment : Fragment(), AirLocation.Callback {
         }
 //        println(tasks.first().locationLat+tasks.first().locationLong)
 
+        // Notifications permission
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.POST_NOTIFICATIONS),1)
+        }else{
+            // Notifications
+            val request=OneTimeWorkRequest.Builder(NotificationWork::class.java)
+                .setInitialDelay(2,TimeUnit.SECONDS)
+                .build()
+
+            WorkManager.getInstance(requireContext()).enqueue(request)
+        }
+
+
     }
+
+    fun showDatePicker() {
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+            val dateString = "$selectedYear-${selectedMonth+1}-$selectedDay"
+            binding.taskDate.setText(dateString)
+        }, year, month, day) // default date
+
+        datePickerDialog.show()
+    }
+
+    fun showTimePicker(){
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+        val timePicker = TimePickerDialog(
+            requireContext(),
+            { _, selectedHour, selectedMinute ->
+                // Convert selected time to 12-hour format string
+                calendar.set(Calendar.HOUR_OF_DAY, selectedHour)
+                calendar.set(Calendar.MINUTE, selectedMinute)
+                val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+                val timeString = timeFormat.format(calendar.time)
+
+                binding.taskTime.setText(timeString)
+            },
+            hour, minute, false // 24-hour format (t/f)
+        )
+
+        timePicker.show()
+    }
+
 
     override fun onFailure(locationFailedEnum: AirLocation.LocationFailedEnum) {
         Toast.makeText(requireContext(), "Error getting location!", Toast.LENGTH_LONG).show()

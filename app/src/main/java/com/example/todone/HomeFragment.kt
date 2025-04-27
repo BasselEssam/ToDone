@@ -35,7 +35,6 @@ class HomeFragment : Fragment() {
 //            Taskk("Gym","x10 push ups and 10 ABS", "2025-04-20","10:30 PM",false,0.0,0.0),
 //            Taskk("Gym","x10 push ups and 10 ABS", "2025-04-20","10:30 PM",false,0.0,0.0),)
         tasks=taskDao.getTasks()
-
         val taskItems=tasks.map { TaskItem(it,taskDao) }
         val adapter= GroupieAdapter()
         adapter.addAll(taskItems)
