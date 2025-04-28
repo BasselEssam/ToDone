@@ -15,7 +15,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
-import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.example.todone.databinding.FragmentAddBinding
@@ -143,7 +142,6 @@ class AddFragment : Fragment(), AirLocation.Callback {
 //                .build()
 
             val request=PeriodicWorkRequest.Builder(NotificationWork::class.java,15,TimeUnit.MINUTES)
-                .setInitialDelay(15,TimeUnit.SECONDS)
                 .build()
 
             WorkManager.getInstance(requireContext()).enqueue(request)
