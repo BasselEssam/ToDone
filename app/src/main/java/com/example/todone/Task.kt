@@ -12,5 +12,7 @@ data class Task(
     var date: String, var time:String,
     var done:Boolean,
     var locationLat:Double, var locationLong:Double,
-    var notifiedBefore:Boolean=false
+    var location:String,
+    var notifiedBefore:Boolean=false,
+    var notifiedLocation:Boolean=false
 )

@@ -77,8 +77,11 @@ class AddFragment : Fragment(), AirLocation.Callback {
 //                    .build()
                 val request=PeriodicWorkRequest.Builder(NotificationWork::class.java,15,TimeUnit.MINUTES)
                     .build()
+                val requestLocationNotification=PeriodicWorkRequest.Builder(LocationNotificationWork::class.java,15,TimeUnit.MINUTES)
+                    .build()
 
                 WorkManager.getInstance(requireContext()).enqueue(request)
+                WorkManager.getInstance(requireContext()).enqueue(requestLocationNotification)
             }
         }
     }
@@ -90,8 +93,8 @@ class AddFragment : Fragment(), AirLocation.Callback {
             return
         }
 
-        val time12h= SimpleDateFormat("hh:mm a", Locale.getDefault()).parse(binding.taskTime.text.toString())
-        val time24h=SimpleDateFormat("HH:mm", Locale.getDefault()).format(time12h)
+//        val time12h= SimpleDateFormat("hh:mm a", Locale.getDefault()).parse(binding.taskTime.text.toString())
+//        val time24h=SimpleDateFormat("HH:mm", Locale.getDefault()).format(time12h)
 //        println(time24h)
         if (binding.taskLocation.text.toString().isNotEmpty()) {
             try {
@@ -102,7 +105,7 @@ class AddFragment : Fragment(), AirLocation.Callback {
 //                            binding.taskTime.text.toString(), false, taskLoc.first().latitude, taskLoc.first().longitude))
                     val newTask= Task(title = binding.taskTitle.text.toString(), description =  binding.taskDescription.text.toString(),
                         date = binding.taskDate.text.toString(), time = binding.taskTime.text.toString(), done = false,
-                        locationLat = taskLoc.first().latitude, locationLong = taskLoc.first().longitude)
+                        locationLat = taskLoc.first().latitude, locationLong = taskLoc.first().longitude, location = binding.taskLocation.text.toString())
                     taskDao.upsertTask(newTask)
                     Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_LONG).show()
                 } else {
@@ -110,7 +113,7 @@ class AddFragment : Fragment(), AirLocation.Callback {
 //                        binding.taskTime.text.toString(), false, 0.0, 0.0))
                     val newTask= Task(title = binding.taskTitle.text.toString(), description =  binding.taskDescription.text.toString(),
                         date = binding.taskDate.text.toString(), time = binding.taskTime.text.toString(), done = false,
-                        locationLat = 0.0, locationLong = 0.0)
+                        locationLat = 0.0, locationLong = 0.0,location = binding.taskLocation.text.toString())
                     taskDao.upsertTask(newTask)
                     Toast.makeText(requireContext(), "Can't find location,Task added successfully", Toast.LENGTH_LONG).show()
                 }
@@ -123,18 +126,15 @@ class AddFragment : Fragment(), AirLocation.Callback {
 //                binding.taskTime.text.toString(), false, 0.0, 0.0))
             val newTask= Task(title = binding.taskTitle.text.toString(), description =  binding.taskDescription.text.toString(),
             date = binding.taskDate.text.toString(), time = binding.taskTime.text.toString(), done = false,
-            locationLat = 0.0, locationLong = 0.0)
+            locationLat = 0.0, locationLong = 0.0,location = binding.taskLocation.text.toString())
             taskDao.upsertTask(newTask)
             Toast.makeText(requireContext(), "Task added successfully without location", Toast.LENGTH_LONG).show()
         }
 //        println(tasks.first().locationLat+tasks.first().locationLong)
 
         // Notifications permission
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
+        {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.POST_NOTIFICATIONS),1)
         }else{
             // Notifications
@@ -143,8 +143,11 @@ class AddFragment : Fragment(), AirLocation.Callback {
 
             val request=PeriodicWorkRequest.Builder(NotificationWork::class.java,15,TimeUnit.MINUTES)
                 .build()
+            val requestLocationNotification=PeriodicWorkRequest.Builder(LocationNotificationWork::class.java,15,TimeUnit.MINUTES)
+                .build()
 
             WorkManager.getInstance(requireContext()).enqueue(request)
+            WorkManager.getInstance(requireContext()).enqueue(requestLocationNotification)
         }
 
 
@@ -185,7 +188,9 @@ class AddFragment : Fragment(), AirLocation.Callback {
 
 
     override fun onFailure(locationFailedEnum: AirLocation.LocationFailedEnum) {
+        if (isAdded) {  // check if the fragment is still attached
         Toast.makeText(requireContext(), "Error getting location!", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onSuccess(locations: ArrayList<Location>) {

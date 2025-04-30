@@ -17,8 +17,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
-class NotificationWork(context: Context, params: WorkerParameters):
-    Worker(context, params) {
+class NotificationWork(context: Context, params: WorkerParameters): Worker(context, params) {
     val db=TasksDB.getDatabase(context)
     val taskDao=db.taskDao()
     val currentDate=LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-M-d"))
@@ -27,36 +26,61 @@ class NotificationWork(context: Context, params: WorkerParameters):
         if(tasks.isNotEmpty()){
             val tasksNotif=tasks.filter {
                 (!Duration.between(LocalTime.now(), LocalTime.parse(it.time, DateTimeFormatter.ofPattern("hh:mm a"))).isNegative
-                        && Duration.between(LocalTime.now(), LocalTime.parse(it.time, DateTimeFormatter.ofPattern("hh:mm a"))).toMinutes()<=30)
-                        && !it.notifiedBefore }
+                        && Duration.between(LocalTime.now(), LocalTime.parse(it.time, DateTimeFormatter.ofPattern("hh:mm a"))).toMinutes()<=30) }
             //val duration= Duration.between(LocalTime.now(), LocalTime.parse(tasksTimes.last(), DateTimeFormatter.ofPattern("hh:mm a")))
-            //println(duration.toMinutes())
-                Log.d("NotificationManager","New Notification")
+            Log.d("NotificationManager","False Notification")
+            println(Duration.between(LocalTime.now(), LocalTime.parse(tasksNotif.first().time, DateTimeFormatter.ofPattern("hh:mm a"))).toMinutes())
+
+            if(tasksNotif.isNotEmpty()){
+                println(Duration.between(LocalTime.now(), LocalTime.parse(tasksNotif.first().time, DateTimeFormatter.ofPattern("hh:mm a"))).toMinutes())
+                Log.d("NotificationManager","New True Notification")
 
                 // create channel
-            createChannel()
+                createChannel()
 
-            val a=Intent(applicationContext,MainActivity::class.java)
-            val pending=PendingIntent.getActivity(applicationContext,1,a,PendingIntent.FLAG_IMMUTABLE)
-            // create notification
-            val notif=NotificationCompat.Builder(applicationContext,"ToDone")
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle(tasksNotif.first().title)
-                .setContentText("Be ready, you should start this task at ${tasksNotif.first().time}")
-                .setAutoCancel(true)
-                .setContentIntent(pending)
-                .build()
+                val a=Intent(applicationContext,MainActivity::class.java)
+                val pending=PendingIntent.getActivity(applicationContext,1,a,PendingIntent.FLAG_IMMUTABLE)
+                // create notification
+                val notif=NotificationCompat.Builder(applicationContext,"ToDone")
+                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .setContentTitle(tasksNotif.first().title)
+                    .setContentText("Be ready, you should start this task at ${tasksNotif.first().time}")
+                    .setAutoCancel(true)
+                    .setContentIntent(pending)
+                    .build()
 
-            tasksNotif.first().notifiedBefore=true
-            taskDao.upsertTask(tasksNotif.first())
+                tasksNotif.first().notifiedBefore=true
+                taskDao.upsertTask(tasksNotif.first())
 
                 try {
                     NotificationManagerCompat.from(applicationContext).notify(1,notif)
                 } catch (e: SecurityException) {
+                    println("Notification Error!")
                 }
                 return Result.success()
+            }
         }
         return Result.failure()
+
+            // test start
+//            createChannel()
+//             val a=Intent(applicationContext,MainActivity::class.java)
+//            val pending=PendingIntent.getActivity(applicationContext,1,a,PendingIntent.FLAG_IMMUTABLE)
+//            val notif=NotificationCompat.Builder(applicationContext,"ToDone")
+//                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+//                    .setContentTitle("Teeest Notifications")
+//                    .setContentText("Be ready, you should start this task at ")
+//                    .setAutoCancel(true)
+//                    .setContentIntent(pending)
+//                    .build()
+//            try {
+//                    NotificationManagerCompat.from(applicationContext).notify(1,notif)
+//                } catch (e: SecurityException) {
+//                    println("Notification Error!")
+//                }
+//            return Result.success()
+            // test end
+
     }
 
     fun createChannel(){
