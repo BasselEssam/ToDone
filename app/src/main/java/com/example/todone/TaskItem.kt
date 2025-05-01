@@ -5,7 +5,7 @@ import android.view.View
 import com.example.todone.databinding.TaskItemBinding
 import com.xwray.groupie.viewbinding.BindableItem
 
-class TaskItem(val task:Task, val taskDao:TaskDao): BindableItem<TaskItemBinding>(){
+class TaskItem(val task:Task, val taskDao:TaskDao, val onDelete: (Task) -> Unit): BindableItem<TaskItemBinding>(){
     override fun bind(viewBinding: TaskItemBinding, position: Int) {
         viewBinding.tiTitle.text = task.title
         viewBinding.tiDate.text = task.date
@@ -15,7 +15,7 @@ class TaskItem(val task:Task, val taskDao:TaskDao): BindableItem<TaskItemBinding
         viewBinding.tiLocation.text=if (task.location.isEmpty()) "" else "\uD83D\uDCCD ${task.location}"
         viewBinding.tiDeleteButton.setOnClickListener {
             taskDao.deleteTask(task)
-            task.location
+            onDelete(task)
         }
         viewBinding.tiCheckBox.setOnClickListener {
             task.done=viewBinding.tiCheckBox.isChecked

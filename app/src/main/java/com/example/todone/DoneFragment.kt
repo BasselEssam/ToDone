@@ -15,6 +15,8 @@ class DoneFragment : Fragment() {
     lateinit var doneTasks:MutableList<Task>
     lateinit var db :TasksDB
     lateinit var taskDao:TaskDao
+    lateinit var adapter: GroupieAdapter
+    lateinit var taskItems:List<TaskItem>
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -30,11 +32,17 @@ class DoneFragment : Fragment() {
         taskDao = db.taskDao()
         doneTasks=taskDao.getDoneTasks()
 
-        val taskItems=doneTasks.map { TaskItem(it,taskDao) }
-        val adapter=GroupieAdapter()
+        taskItems=doneTasks.map { TaskItem(it,taskDao,{taskToDelete->deleteTask(taskToDelete)}) }
+        adapter=GroupieAdapter()
         adapter.addAll(taskItems)
-        println(taskItems)
         binding.doneTaskRV.adapter=adapter
+    }
+
+    private fun deleteTask(taskToDelete: Task) {
+        doneTasks.remove(taskToDelete)
+        adapter.clear()
+        taskItems=doneTasks.map { TaskItem(it,taskDao,{taskToDelete->deleteTask(taskToDelete)}) }
+        adapter.addAll(taskItems)
     }
 
 }

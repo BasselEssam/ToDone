@@ -27,8 +27,6 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavBar.setOnItemSelectedListener {
             if(it.itemId == R.id.home)
                 replaceFragment(HomeFragment())
-            else if(it.itemId == R.id.settings)
-                replaceFragment(SettingsFragment())
             else if(it.itemId == R.id.add)
                 replaceFragment(AddFragment())
             else replaceFragment(DoneFragment())

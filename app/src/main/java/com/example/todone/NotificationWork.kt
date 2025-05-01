@@ -29,7 +29,7 @@ class NotificationWork(context: Context, params: WorkerParameters): Worker(conte
                         && Duration.between(LocalTime.now(), LocalTime.parse(it.time, DateTimeFormatter.ofPattern("hh:mm a"))).toMinutes()<=30) }
             //val duration= Duration.between(LocalTime.now(), LocalTime.parse(tasksTimes.last(), DateTimeFormatter.ofPattern("hh:mm a")))
             Log.d("NotificationManager","False Notification")
-            println(Duration.between(LocalTime.now(), LocalTime.parse(tasksNotif.first().time, DateTimeFormatter.ofPattern("hh:mm a"))).toMinutes())
+//            println(Duration.between(LocalTime.now(), LocalTime.parse(tasksNotif.first().time, DateTimeFormatter.ofPattern("hh:mm a"))).toMinutes())
 
             if(tasksNotif.isNotEmpty()){
                 println(Duration.between(LocalTime.now(), LocalTime.parse(tasksNotif.first().time, DateTimeFormatter.ofPattern("hh:mm a"))).toMinutes())
